@@ -19,7 +19,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ActivityRadioDetails"></activity>
+        <activity android:name=".ActivityRadioDetails" />
+
+        <receiver
+            android:name=".receivers.PlayerReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+        <service android:name=".services.PlayerService" />
     </application>
 
 </manifest>

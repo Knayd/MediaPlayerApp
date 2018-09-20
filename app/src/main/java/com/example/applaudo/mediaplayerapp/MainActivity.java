@@ -1,42 +1,42 @@
 package com.example.applaudo.mediaplayerapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.io.IOException;
+import com.example.applaudo.mediaplayerapp.receivers.Actions;
+import com.example.applaudo.mediaplayerapp.services.PlayerService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageButton mPlayStop, mInfo;
     private Boolean mIsPlaying =false;
-    //Creating the media player
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+
+    private PlayerReceiver mPlayerReceiver = new PlayerReceiver();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Setting the filters and actions
+        IntentFilter playerFilter = new IntentFilter();
+        playerFilter.addAction(Actions.ACTION_CUSTOM_PAUSE);
+        playerFilter.addAction(Actions.ACTION_CUSTOM_PLAY);
+
+        //Registering the local receiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(mPlayerReceiver, playerFilter);
 
         mPlayStop = findViewById(R.id.btnPlayStop);
         mInfo = findViewById(R.id.btnInfo);
-
-
-        String url = "http://us5.internet-radio.com:8110/listen.pls&t=.m3u";
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try {
-            mediaPlayer.setDataSource(url);
-            mediaPlayer.prepare();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         mPlayStop.setOnClickListener(this);
         mInfo.setOnClickListener(this);
@@ -52,15 +52,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mPlayStop.setImageResource(R.mipmap.ic_pause);
                     Toast.makeText(this, "Play!", Toast.LENGTH_SHORT).show();
                     mIsPlaying=true;
-                    mediaPlayer.start();
+
+
+                    //Creates a new intent with the custom broadcast
+                    Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PLAY);
+                    //Sends the broadcast
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+
+
                 } else {
                     //Pauses the music and sets the icon
-                    mediaPlayer.pause();
                     mPlayStop.setImageResource(R.mipmap.ic_play);
                     mIsPlaying=false;
-                    Toast.makeText(this, "Pause!", Toast.LENGTH_SHORT).show();
+
+                    //Creates a new intent with the custom broadcast
+                    Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PAUSE);
+                    //Sends the broadcast
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+
                 }
                 break;
+
 
             case R.id.btnInfo:
                 //Starts the info activity
@@ -74,10 +86,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStop() {
         super.onStop();
-        //Stops the music when changing the activity
-//        mediaPlayer.pause();
-//        mPlayStop.setImageResource(R.mipmap.ic_play);
-//        mIsPlaying=false;
+
         Toast.makeText(this, "Stopped!", Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //Unregister receiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mPlayerReceiver);
+    }
+
+
+    //The receiver
+    public class PlayerReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String intentAction = intent.getAction();
+
+            //This is where the logic of playing/pause goes
+            if (intentAction != null) {
+                String toastMessage = "Unkown intent action";
+
+                switch (intentAction){
+                    case Actions.ACTION_CUSTOM_PLAY:
+                        toastMessage = "Receiver - Play";
+                        //Service start
+                        startService(new Intent(getApplicationContext(), PlayerService.class));
+                        break;
+                    case Actions.ACTION_CUSTOM_PAUSE:
+                        toastMessage = "Receiver - Pause";
+                        stopService(new Intent(getApplicationContext(), PlayerService.class));
+                        break;
+                }
+
+                Toast.makeText(context,toastMessage, Toast.LENGTH_SHORT).show();
+            }
+
+
+
+        }
+    }
+
+
 }
