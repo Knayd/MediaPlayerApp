@@ -1,7 +1,9 @@
-package com.example.applaudo.mediaplayerapp;
+package com.example.applaudo.mediaplayerapp.main;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.applaudo.mediaplayerapp.R;
 
 public class ActivityRadioDetails extends AppCompatActivity {
 
