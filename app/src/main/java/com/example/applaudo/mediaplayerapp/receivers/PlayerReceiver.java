@@ -17,7 +17,9 @@ public class PlayerReceiver extends BroadcastReceiver {
         void onButtonPressed(String action);
     }
 
-
+    //Compilator doesn't like if there's no default constructor
+    public PlayerReceiver() {
+    }
 
     public PlayerReceiver(OnPlayPausePressed mCallback) {
         this.mCallback = mCallback;

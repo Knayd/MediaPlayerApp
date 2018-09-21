@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".main.MainActivity"
-            android:launchMode="singleTop"> <!-- SingleTop is so the activity doesn't stack on an intent call -->
+            android:launchMode="singleInstance"> <!-- SingleInstance is so the activity doesn't stack on an intent call -->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +23,8 @@
 
         <service android:name=".services.PlayerService" />
 
-        <activity android:name=".main.ActivityRadioDetails" />
+        <activity android:name=".main.ActivityRadioDetails"
+            android:launchMode="singleInstance"/>
 
         <receiver
             android:name=".receivers.PlayerReceiver"
