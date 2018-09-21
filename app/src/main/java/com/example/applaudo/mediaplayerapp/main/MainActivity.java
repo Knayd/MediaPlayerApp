@@ -24,7 +24,7 @@ import com.example.applaudo.mediaplayerapp.services.PlayerService;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, PlayerReceiver.OnPlayPausePressed {
 
     private ImageButton mPlayStop, mInfo;
-    private Boolean mIsPlaying =false;
+    private Boolean mIsPlaying = false;
 
     //Notifications
     private static final String PRIMARY_CHANNEL_ID = "primary_notification_channel";
@@ -69,21 +69,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (!mIsPlaying) {
                     //Sends the action to perform to the service
-                    intentPlayPause.putExtra(Constants.PLAY_PAUSE,"PLAY");
+                    intentPlayPause.putExtra(Constants.PLAY_PAUSE, "PLAY");
                     startService(intentPlayPause);
 
                 } else {
                     //Sends the action to perform to the service
-                    intentPlayPause.putExtra(Constants.PLAY_PAUSE,"PAUSE");
+                    intentPlayPause.putExtra(Constants.PLAY_PAUSE, "PAUSE");
                     startService(intentPlayPause);
-
                 }
                 break;
 
-
             case R.id.btnInfo:
                 //Starts the info activity
-                Intent intent = new Intent(getApplicationContext(),ActivityRadioDetails.class);
+                Intent intent = new Intent(getApplicationContext(), ActivityRadioDetails.class);
                 startActivity(intent);
                 break;
         }
@@ -95,9 +93,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onStop();
         //This is where it sends the notification
         NotificationCompat.Builder playerBuilder = getNotificationBuilder();
-        mNotificationPlayerManager.notify(NOTIFICATION_ID,playerBuilder.build());
+        mNotificationPlayerManager.notify(NOTIFICATION_ID, playerBuilder.build());
 
-        Toast.makeText(this, "Stopped!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -118,29 +115,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //region Notifications
 
-    private NotificationCompat.Builder getNotificationBuilder(){
+    private NotificationCompat.Builder getNotificationBuilder() {
         //This is the intent the notification will use to launch the activity
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         //Pending intent to run predefined code
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(this,NOTIFICATION_ID,notificationIntent, 0);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, notificationIntent, 0);
 
 
         //Intent for the play button
-        Intent playIntent = new Intent(this,PlayerService.class);
-        playIntent.putExtra(Constants.PLAY_PAUSE,"PLAY");
-        playIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Intent playIntent = new Intent(this, PlayerService.class);
+        playIntent.putExtra(Constants.PLAY_PAUSE, "PLAY");
+        playIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         //Pending intent for the play button
         //This is were it is sent to the Service
-        PendingIntent playPendingIntent = PendingIntent.getService(this,0,playIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent playPendingIntent = PendingIntent.getService(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         //Intent for the pause button
         Intent pauseIntent = new Intent(this, PlayerService.class);
-        pauseIntent.putExtra(Constants.PLAY_PAUSE,"PAUSE");
-        pauseIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        pauseIntent.putExtra(Constants.PLAY_PAUSE, "PAUSE");
+        pauseIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         //Pending intent for the pause button
-        PendingIntent pausePendingIntent = PendingIntent.getService(this,1,pauseIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pausePendingIntent = PendingIntent.getService(this, 1, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Create a new notification
         NotificationCompat.Builder playerBuilder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
@@ -154,8 +151,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setDefaults(NotificationCompat.DEFAULT_ALL); //Set the sound, vibration, LED-color pattern for the notification
 
         //Adding the action buttons
-        playerBuilder.addAction(0,"Play",playPendingIntent);
-        playerBuilder.addAction(0,"Pause",pausePendingIntent);
+        playerBuilder.addAction(0, "Play", playPendingIntent);
+        playerBuilder.addAction(0, "Pause", pausePendingIntent);
 
         return playerBuilder;
     }
@@ -165,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mNotificationPlayerManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         //Checks if the android version is above 26
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //Creating the notification channel
             NotificationChannel notificationChannel = new NotificationChannel(PRIMARY_CHANNEL_ID, "Player notification", NotificationManager.IMPORTANCE_HIGH);
 
@@ -183,22 +180,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    //Implementation of the interface
+    //endregion
+
+
+    //region Implementation of the interface
     @Override
     public void onButtonPressed(String action) {
-        if (action.equals(Actions.ACTION_CUSTOM_PAUSE)){
+        if (action.equals(Actions.ACTION_CUSTOM_PAUSE)) {
             //Sets the icon to play
             mPlayStop.setImageResource(R.mipmap.ic_play);
-            mIsPlaying=false;
+            mIsPlaying = false;
         } else {
             //Sets the icon to pause
             mPlayStop.setImageResource(R.mipmap.ic_pause);
-            mIsPlaying=true;
+            mIsPlaying = true;
         }
     }
 
-
     //endregion
-
 
 }

@@ -29,7 +29,7 @@
         <receiver
             android:name=".receivers.PlayerReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true"/>
     </application>
 
 </manifest>

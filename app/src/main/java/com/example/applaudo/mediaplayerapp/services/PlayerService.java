@@ -8,13 +8,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import com.example.applaudo.mediaplayerapp.constants.Constants;
 import com.example.applaudo.mediaplayerapp.receivers.Actions;
 
 import java.io.IOException;
-import java.nio.BufferUnderflowException;
 
 public class PlayerService extends Service {
     //This is what makes the player play/stop
@@ -48,7 +46,7 @@ public class PlayerService extends Service {
         Bundle actionToPerform = intent.getExtras();
         String theAction;
         if (actionToPerform != null) {
-           theAction = actionToPerform.getString(Constants.PLAY_PAUSE);
+            theAction = actionToPerform.getString(Constants.PLAY_PAUSE);
 
             if (theAction.equals("PLAY")) {
                 mediaPlayer.start();
