@@ -21,7 +21,7 @@ import com.example.applaudo.mediaplayerapp.receivers.Actions;
 import com.example.applaudo.mediaplayerapp.receivers.PlayerReceiver;
 import com.example.applaudo.mediaplayerapp.services.PlayerService;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, PlayerReceiver.OnPlayPausePressed {
 
     private ImageButton mPlayStop, mInfo;
     private Boolean mIsPlaying =false;
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private NotificationManager mNotificationPlayerManager;
 
     //Receiver
-    private PlayerReceiver mPlayerReceiver = new PlayerReceiver();
+    private PlayerReceiver mPlayerReceiver = new PlayerReceiver(this);
 
 
     @Override
@@ -68,33 +68,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intentPlayPause = new Intent(getApplicationContext(), PlayerService.class);
 
                 if (!mIsPlaying) {
-                    //Sets the icon to play and sends the action to perform to the service
-                    mPlayStop.setImageResource(R.mipmap.ic_pause);
-                    Toast.makeText(this, "Play!", Toast.LENGTH_SHORT).show();
-                    mIsPlaying=true;
-
+                    //Sends the action to perform to the service
                     intentPlayPause.putExtra(Constants.PLAY_PAUSE,"PLAY");
                     startService(intentPlayPause);
 
-                    /*//Broadcast==========
-                    //Creates a new intent with the custom broadcast
-                    Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PLAY);
-                    //Sends the broadcast
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);*/
-
-
                 } else {
-                    //Sets the icon to pause and sends the action to perform to the service
-                    mPlayStop.setImageResource(R.mipmap.ic_play);
-                    mIsPlaying=false;
-
+                    //Sends the action to perform to the service
                     intentPlayPause.putExtra(Constants.PLAY_PAUSE,"PAUSE");
                     startService(intentPlayPause);
 
-                    /*//Creates a new intent with the custom broadcast
-                    Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PAUSE);
-                    //Sends the broadcast
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);*/
                 }
                 break;
 
@@ -127,6 +109,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Stops the service when the activity is destroyed
         stopService(new Intent(getApplicationContext(), PlayerService.class));
+
+        //Closes the notification when the activity is destroyed
+        mNotificationPlayerManager.cancel(NOTIFICATION_ID);
+
 
     }
 
@@ -162,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setContentText("You're listening to: http://us5.internet-radio.com:8110/listen.pls&t=.m3u") //Set the description
                 .setSmallIcon(R.drawable.note) //Set the icon
                 .setContentIntent(notificationPendingIntent) //Sets the content intent (pending intent) for this notification
-                .setAutoCancel(false) //Sets the notifcation not to close when the user taps on it
-                //This is for backwards compatibility (Anroid 7.1 or lower)
+                .setAutoCancel(false) //Sets the notification not to close when the user taps on it
+                //This is for backwards compatibility (Android 7.1 or lower)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(NotificationCompat.DEFAULT_ALL); //Set the sound, vibration, LED-color pattern for the notification
 
@@ -195,6 +181,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
+    }
+
+    //Implementation of the interface
+    @Override
+    public void onButtonPressed(String action) {
+        if (action.equals(Actions.ACTION_CUSTOM_PAUSE)){
+            //Sets the icon to play
+            mPlayStop.setImageResource(R.mipmap.ic_play);
+            mIsPlaying=false;
+        } else {
+            //Sets the icon to pause
+            mPlayStop.setImageResource(R.mipmap.ic_pause);
+            mIsPlaying=true;
+        }
     }
 
 

@@ -7,9 +7,11 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.example.applaudo.mediaplayerapp.constants.Constants;
+import com.example.applaudo.mediaplayerapp.receivers.Actions;
 
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
@@ -49,11 +51,22 @@ public class PlayerService extends Service {
            theAction = actionToPerform.getString(Constants.PLAY_PAUSE);
 
             if (theAction.equals("PLAY")) {
-                Toast.makeText(this, "onStartCommand Play", Toast.LENGTH_SHORT).show();
                 mediaPlayer.start();
+
+                //Creates a new intent with the custom broadcast
+                Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PLAY);
+                //Sends the broadcast
+                LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+
             } else {
-                Toast.makeText(this, "onStartCommand Pause", Toast.LENGTH_SHORT).show();
                 mediaPlayer.pause();
+
+                //Creates a new intent with the custom broadcast
+                Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PAUSE);
+                //Sends the broadcast
+                LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+
+
             }
         }
         return START_STICKY;
