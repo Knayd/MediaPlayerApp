@@ -56,15 +56,27 @@ public class PlayerService extends Service {
                 //Sends the broadcast
                 LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
 
-            } else {
+            } else if (theAction.equals("PAUSE")) {
                 mediaPlayer.pause();
 
                 //Creates a new intent with the custom broadcast
                 Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PAUSE);
                 //Sends the broadcast
                 LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+            } else if (theAction.equals("MUTE")) {
+                mediaPlayer.setVolume(0, 0);
 
+                //Creates a new intent with the custom broadcast
+                Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_MUTE);
+                //Sends the broadcast
+                LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+            } else {
+                mediaPlayer.setVolume(1,1);
 
+                //Creates a new intent with the custom broadcast
+                Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_UNMUTE);
+                //Sends the broadcast
+                LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
             }
         }
         return START_STICKY;

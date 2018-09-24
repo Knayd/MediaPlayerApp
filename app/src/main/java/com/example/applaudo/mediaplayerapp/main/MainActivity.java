@@ -24,8 +24,9 @@ import com.example.applaudo.mediaplayerapp.services.PlayerService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, PlayerReceiver.OnPlayPausePressed {
 
-    private ImageButton mPlayStop, mInfo;
+    private ImageButton mPlayStop, mInfo,mMute;
     private Boolean mIsPlaying = false;
+    private Boolean mIsMuted = false;
 
     //Notifications
     private static final String PRIMARY_CHANNEL_ID = "primary_notification_channel";
@@ -46,15 +47,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         IntentFilter playerFilter = new IntentFilter();
         playerFilter.addAction(Actions.ACTION_CUSTOM_PAUSE);
         playerFilter.addAction(Actions.ACTION_CUSTOM_PLAY);
+        playerFilter.addAction(Actions.ACTION_CUSTOM_MUTE);
+        playerFilter.addAction(Actions.ACTION_CUSTOM_UNMUTE);
 
         //Registering the local receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(mPlayerReceiver, playerFilter);
 
         mPlayStop = findViewById(R.id.btnPlayStop);
         mInfo = findViewById(R.id.btnInfo);
+        mMute = findViewById(R.id.btnMute);
 
         mPlayStop.setOnClickListener(this);
         mInfo.setOnClickListener(this);
+        mMute.setOnClickListener(this);
 
         //Create the notification channel
         createNotificationChannel();
@@ -63,20 +68,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
+        Intent intentMediaAction = new Intent(getApplicationContext(), PlayerService.class);
+
         switch (v.getId()) {
             case R.id.btnPlayStop:
-
-                Intent intentPlayPause = new Intent(getApplicationContext(), PlayerService.class);
-
                 if (!mIsPlaying) {
-                    //Sends the action to perform to the service
-                    intentPlayPause.putExtra(Constants.PLAY_PAUSE, "PLAY");
-                    startService(intentPlayPause);
+                    //Sends the action to perform to the service (PLAY)
+                    intentMediaAction.putExtra(Constants.PLAY_PAUSE, "PLAY");
+                    startService(intentMediaAction);
 
                 } else {
-                    //Sends the action to perform to the service
-                    intentPlayPause.putExtra(Constants.PLAY_PAUSE, "PAUSE");
-                    startService(intentPlayPause);
+                    //Sends the action to perform to the service (PAUSE)
+                    intentMediaAction.putExtra(Constants.PLAY_PAUSE, "PAUSE");
+                    startService(intentMediaAction);
                 }
                 break;
 
@@ -85,6 +90,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(getApplicationContext(), ActivityRadioDetails.class);
                 startActivity(intent);
                 break;
+
+            case R.id.btnMute:
+                if (!mIsMuted) {
+                    //Sends the action to perform to the service (MUTE)
+                    intentMediaAction.putExtra(Constants.PLAY_PAUSE, "MUTE");
+                    startService(intentMediaAction);
+                    break;
+                } else {
+                    //Sends the action to perform to the service (UNMUTE)
+                    intentMediaAction.putExtra(Constants.PLAY_PAUSE, "UNMUTE");
+                    startService(intentMediaAction);
+                    break;
+                }
+
         }
 
     }
@@ -140,6 +159,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Pending intent for the pause button
         PendingIntent pausePendingIntent = PendingIntent.getService(this, 1, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        //Intent for the mute button
+        Intent muteIntent = new Intent(this, PlayerService.class);
+        muteIntent.putExtra(Constants.PLAY_PAUSE, "MUTE");
+        muteIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //Pending intent for the mute button
+        PendingIntent mutePendingIntent = PendingIntent.getService(this, 2, muteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Intent for the unmute button
+        Intent unmuteIntent = new Intent(this, PlayerService.class);
+        unmuteIntent.putExtra(Constants.PLAY_PAUSE, "UNMUTE");
+        unmuteIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //Pending intent for the mute button
+        PendingIntent unmutePendingIntent = PendingIntent.getService(this, 3, unmuteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         //Create a new notification
         NotificationCompat.Builder playerBuilder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
                 .setContentTitle("Live Radio") //Set the title
@@ -152,8 +185,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setDefaults(NotificationCompat.DEFAULT_ALL); //Set the sound, vibration, LED-color pattern for the notification
 
         //Adding the action buttons
-        playerBuilder.addAction(R.drawable.ic_play, "Play", playPendingIntent);
-        playerBuilder.addAction(R.drawable.ic_pause, "Pause", pausePendingIntent);
+        playerBuilder.addAction(R.mipmap.ic_play, "Play", playPendingIntent);
+        playerBuilder.addAction(R.mipmap.ic_pause, "Pause", pausePendingIntent);
+        playerBuilder.addAction(0,"Mute",mutePendingIntent);
+        playerBuilder.addAction(0,"Un-mute",unmutePendingIntent);
 
         return playerBuilder;
     }
@@ -187,14 +222,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //region Implementation of the interface
     @Override
     public void onButtonPressed(String action) {
-        if (action.equals(Actions.ACTION_CUSTOM_PAUSE)) {
+        if (action.equals(Actions.ACTION_CUSTOM_PLAY)) {
             //Sets the icon to play
-            mPlayStop.setImageResource(R.drawable.radio_play);
-            mIsPlaying = false;
-        } else {
-            //Sets the icon to pause
             mPlayStop.setImageResource(R.drawable.radio_pause);
             mIsPlaying = true;
+        } else if (action.equals(Actions.ACTION_CUSTOM_PAUSE)) {
+            //Sets the icon to pause
+            mPlayStop.setImageResource(R.drawable.radio_play);
+            mIsPlaying = false;
+        } else if (action.equals(Actions.ACTION_CUSTOM_MUTE)) {
+            mMute.setImageResource(R.drawable.ic_unmute);
+            mIsMuted = true;
+        } else {
+            mMute.setImageResource(R.drawable.ic_mute);
+            mIsMuted=false;
         }
     }
 

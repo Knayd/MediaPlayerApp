@@ -33,11 +33,18 @@ public class PlayerReceiver extends BroadcastReceiver {
                 case Actions.ACTION_CUSTOM_PLAY:
                     //Sends the action to the MainActivity
                     mCallback.onButtonPressed(Actions.ACTION_CUSTOM_PLAY);
-                    //Service start
                     break;
                 case Actions.ACTION_CUSTOM_PAUSE:
                     //Sends the action to the MainActivity
                     mCallback.onButtonPressed(Actions.ACTION_CUSTOM_PAUSE);
+                    break;
+                case Actions.ACTION_CUSTOM_MUTE:
+                    //Sends the action to the MainActivity
+                    mCallback.onButtonPressed(Actions.ACTION_CUSTOM_MUTE);
+                    break;
+                case Actions.ACTION_CUSTOM_UNMUTE:
+                    //Sends the action to the MainActivity
+                    mCallback.onButtonPressed(Actions.ACTION_CUSTOM_UNMUTE);
                     break;
             }
 
