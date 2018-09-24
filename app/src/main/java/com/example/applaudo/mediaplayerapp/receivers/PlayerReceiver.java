@@ -9,7 +9,7 @@ public class PlayerReceiver extends BroadcastReceiver {
 
     private OnPlayPausePressed mCallback;
 
-    //This is to change the button icon in the Main Activity
+    //This is to change the button icons in the Main Activity
     public interface OnPlayPausePressed {
         void onButtonPressed(String action);
     }

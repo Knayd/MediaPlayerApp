@@ -48,35 +48,42 @@ public class PlayerService extends Service {
         if (actionToPerform != null) {
             theAction = actionToPerform.getString(Constants.PLAY_PAUSE);
 
-            if (theAction.equals("PLAY")) {
-                mediaPlayer.start();
+            switch (theAction) {
+                case "PLAY": {
+                    mediaPlayer.start();
+                    //Creates a new intent with the custom broadcast
+                    Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PLAY);
+                    //Sends the broadcast
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+                    break;
+                }
+                case "PAUSE": {
+                    mediaPlayer.pause();
 
-                //Creates a new intent with the custom broadcast
-                Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PLAY);
-                //Sends the broadcast
-                LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+                    //Creates a new intent with the custom broadcast
+                    Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PAUSE);
+                    //Sends the broadcast
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+                    break;
+                }
+                case "MUTE": {
+                    mediaPlayer.setVolume(0, 0);
 
-            } else if (theAction.equals("PAUSE")) {
-                mediaPlayer.pause();
+                    //Creates a new intent with the custom broadcast
+                    Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_MUTE);
+                    //Sends the broadcast
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+                    break;
+                }
+                default: { //Unmute
+                    mediaPlayer.setVolume(1, 1);
 
-                //Creates a new intent with the custom broadcast
-                Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_PAUSE);
-                //Sends the broadcast
-                LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
-            } else if (theAction.equals("MUTE")) {
-                mediaPlayer.setVolume(0, 0);
-
-                //Creates a new intent with the custom broadcast
-                Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_MUTE);
-                //Sends the broadcast
-                LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
-            } else {
-                mediaPlayer.setVolume(1,1);
-
-                //Creates a new intent with the custom broadcast
-                Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_UNMUTE);
-                //Sends the broadcast
-                LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+                    //Creates a new intent with the custom broadcast
+                    Intent customPlayerBroadcastReceiver = new Intent(Actions.ACTION_CUSTOM_UNMUTE);
+                    //Sends the broadcast
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(customPlayerBroadcastReceiver);
+                    break;
+                }
             }
         }
         return START_STICKY;

@@ -9,12 +9,10 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.example.applaudo.mediaplayerapp.R;
 import com.example.applaudo.mediaplayerapp.constants.Constants;
@@ -24,6 +22,7 @@ import com.example.applaudo.mediaplayerapp.services.PlayerService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, PlayerReceiver.OnPlayPausePressed {
 
+    //I'll leave this warning here because I like to have my variable's declaration in one place
     private ImageButton mPlayStop, mInfo,mMute;
     private Boolean mIsPlaying = false;
     private Boolean mIsMuted = false;
@@ -218,24 +217,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //endregion
 
-
     //region Implementation of the interface
     @Override
     public void onButtonPressed(String action) {
-        if (action.equals(Actions.ACTION_CUSTOM_PLAY)) {
-            //Sets the icon to play
-            mPlayStop.setImageResource(R.drawable.radio_pause);
-            mIsPlaying = true;
-        } else if (action.equals(Actions.ACTION_CUSTOM_PAUSE)) {
-            //Sets the icon to pause
-            mPlayStop.setImageResource(R.drawable.radio_play);
-            mIsPlaying = false;
-        } else if (action.equals(Actions.ACTION_CUSTOM_MUTE)) {
-            mMute.setImageResource(R.drawable.ic_unmute);
-            mIsMuted = true;
-        } else {
-            mMute.setImageResource(R.drawable.ic_mute);
-            mIsMuted=false;
+        switch (action) {
+            case Actions.ACTION_CUSTOM_PLAY:
+                //Sets the icon to play
+                mPlayStop.setImageResource(R.drawable.radio_pause);
+                mIsPlaying = true;
+                break;
+            case Actions.ACTION_CUSTOM_PAUSE:
+                //Sets the icon to pause
+                mPlayStop.setImageResource(R.drawable.radio_play);
+                mIsPlaying = false;
+                break;
+            case Actions.ACTION_CUSTOM_MUTE:
+                //Set the icon to unmute
+                mMute.setImageResource(R.drawable.ic_unmute);
+                mIsMuted = true;
+                break;
+            default:
+                //Set the icon to mute
+                mMute.setImageResource(R.drawable.ic_mute);
+                mIsMuted = false;
+                break;
         }
     }
 
