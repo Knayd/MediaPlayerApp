@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -141,9 +142,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Create a new notification
         NotificationCompat.Builder playerBuilder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
-                .setContentTitle("Radio") //Set the title
+                .setContentTitle("Live Radio") //Set the title
                 .setContentText("You're listening to: http://us5.internet-radio.com:8110/listen.pls&t=.m3u") //Set the description
-                .setSmallIcon(R.drawable.note) //Set the icon
+                .setSmallIcon(R.drawable.ic_note) //Set the icon
                 .setContentIntent(notificationPendingIntent) //Sets the content intent (pending intent) for this notification
                 .setAutoCancel(false) //Sets the notification not to close when the user taps on it
                 //This is for backwards compatibility (Android 7.1 or lower)
@@ -151,8 +152,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setDefaults(NotificationCompat.DEFAULT_ALL); //Set the sound, vibration, LED-color pattern for the notification
 
         //Adding the action buttons
-        playerBuilder.addAction(0, "Play", playPendingIntent);
-        playerBuilder.addAction(0, "Pause", pausePendingIntent);
+        playerBuilder.addAction(R.drawable.ic_play, "Play", playPendingIntent);
+        playerBuilder.addAction(R.drawable.ic_pause, "Pause", pausePendingIntent);
 
         return playerBuilder;
     }
@@ -188,11 +189,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onButtonPressed(String action) {
         if (action.equals(Actions.ACTION_CUSTOM_PAUSE)) {
             //Sets the icon to play
-            mPlayStop.setImageResource(R.mipmap.ic_play);
+            mPlayStop.setImageResource(R.drawable.radio_play);
             mIsPlaying = false;
         } else {
             //Sets the icon to pause
-            mPlayStop.setImageResource(R.mipmap.ic_pause);
+            mPlayStop.setImageResource(R.drawable.radio_pause);
             mIsPlaying = true;
         }
     }

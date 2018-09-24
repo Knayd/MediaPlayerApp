@@ -17,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:textStyle="bold"
         android:textAppearance="?android:textAppearanceLarge"
-        android:text="Radio Name"
+        android:text="Live Radio"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +30,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:textAppearance="?android:textAppearanceMedium"
-        android:text="Radio description Radio description Radio description Radio description Radio description Radio description Radio description Radio description Radio description Radio description Radio description "
+        android:text="Bringing you only the best music 24/7, 365 days a year. Don't forget to follow us on Facebook, Instagram and Twitter to let us know what you think!"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
